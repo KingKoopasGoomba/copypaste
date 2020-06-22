@@ -1,17 +1,34 @@
-import pyperclip
 import keyboard
+import pkgutil
+import importlib
+import pkgutil
 
-sentence_original = ["So", "you're", "going"]
+def main():
+    clear_defined_hotkeys()
+    register_all()
+    while True:
+        pass
 
-sentence = sentence_original.copy()
+def register_all():
+    # hardcoded for now
+    package_name = 'modules'
 
-def get_next_sentence():
-    global sentence
-    pyperclip.copy(sentence[0])
-    del sentence[0]
-    if len(sentence) == 0:
-        sentence = sentence_original.copy()
+    module_names = [name for _, name, _ in pkgutil.iter_modules([package_name])]
 
-keyboard.add_hotkey("ctrl + v", get_next_sentence)
+    for module_name in module_names:
+        register_from_module_name(package_name + '.' + module_name)
 
-keyboard.wait("F2")
+def register_from_module_name(module_name):
+    module = importlib.import_module(module_name)
+    # todo error checking
+    print('registering: ' + module.shortcut)
+    return keyboard.add_hotkey(module.shortcut, module.action)
+
+def clear_defined_hotkeys():
+    try:
+        keyboard.unhook_all_hotkeys()
+    except AttributeError:
+        pass
+
+if __name__ == "__main__":
+    main()
