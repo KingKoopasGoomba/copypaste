@@ -1,7 +1,8 @@
-from tkinter import Tk, Button
-# shortcut to trigger action
+import logging
+
+log = logging.getLogger(__name__)
 shortcut = 'ctrl+shift+l'
 
 # code to execute
 def action():
-    print('got ' +shortcut )
+    log.info("pressed stuff")

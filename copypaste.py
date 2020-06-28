@@ -2,6 +2,19 @@ import keyboard
 import pkgutil
 import importlib
 import pkgutil
+import logging
+import sys
+
+def setup_logging():
+    logger = logging.getLogger()
+
+    logger.setLevel(logging.DEBUG)
+    # stdout handler
+    stream_handler = logging.StreamHandler(sys.stdout)
+    logger.addHandler(stream_handler)
+
+setup_logging()
+log = logging.getLogger()
 
 def main():
     clear_defined_hotkeys()
@@ -21,7 +34,7 @@ def register_all():
 def register_from_module_name(module_name):
     module = importlib.import_module(module_name)
     # todo error checking
-    print('registering: ' + module.shortcut)
+    log.debug('registering: ' + module.shortcut)
     return keyboard.add_hotkey(module.shortcut, module.action)
 
 def clear_defined_hotkeys():
