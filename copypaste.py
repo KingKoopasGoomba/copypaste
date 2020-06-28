@@ -3,20 +3,24 @@ import pkgutil
 import importlib
 import pkgutil
 import logging
+import logging.config
 import sys
+import yaml
+import configparser
 
-def setup_logging():
-    logger = logging.getLogger()
-
-    logger.setLevel(logging.DEBUG)
-    # stdout handler
-    stream_handler = logging.StreamHandler(sys.stdout)
-    logger.addHandler(stream_handler)
-
-setup_logging()
 log = logging.getLogger()
 
+def read_config(config_file_path):
+    with open(config_file_path) as config_file:
+        config = yaml.full_load(config_file)
+    return config
+
+def setup_logging():
+    logging.config.fileConfig('./config/logging.conf')
+
 def main():
+    setup_logging()
+
     clear_defined_hotkeys()
     register_all()
     while True:
@@ -25,7 +29,6 @@ def main():
 def register_all():
     # hardcoded for now
     package_name = 'modules'
-
     module_names = [name for _, name, _ in pkgutil.iter_modules([package_name])]
 
     for module_name in module_names:
